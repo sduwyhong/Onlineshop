@@ -1,0 +1,221 @@
+1.mybatis中resultMap的n+1问题
+
+2.lombok的安装及与maven整合（安装插件、将maven-compile-plugin版本提升为3.3、用maven引入lombok依赖即可）
+     如果直接导包，maven会先于lombok打包，maven test时会报找不到lombok包的错误
+  maven导入包后，ide仍然会提示找不到get、set方法，这时导入一个lombok.jar即可
+     
+3.maven打包时，要添加如下构建代码
+<resources>  
+    <resource>  
+        <directory>src/main/java</directory>  
+        <includes>  
+            <include>**/*.xml</include>  
+        </includes>  
+        <filtering>true</filtering>  
+    </resource>
+     <resource>
+         <directory>src/main/resources</directory>
+         <includes>
+             <include>**/*</include>
+         </includes>
+     </resource>  
+</resources> 
+否则无法将配置文件(.xml、.properties)打包进项目路径，故无法解析mapper或properties
+
+4.执行一个sql文件批量创建表
+
+5.uncategorized SQLException for SQL []; SQL state [99999]; error code [17004]; 无效的列类型: 1111;
+  solution1:检查是否插入NULL
+  
+6.ORA-01400: 无法将 NULL 插入 ("SYSTEM"."OS_FAVORITE"."ID")
+ <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+ 	SELECT OS_FAVORITE_SEQ.NEXTVAL 
+ 	FROM dual
+ </selectKey>
+order如果设置为 BEFORE,那么它会首先选择主键,设置 keyProperty 然后执行插入语句。
+如果设置为 AFTER,那么先执行插入语句,然后是 selectKey元素
+
+7.若测试时，有项目配置文件未被编译更新，则改动一下再编译即可
+
+8.用junit框架测试带spring注入的功能，要在测试类上加如下注解
+@RunWith(SpringJUnit4ClassRunner.class)  
+@ContextConfiguration(locations={"classpath:spring/applicationContext.xml",
+		"classpath:spring/applicationContext-dao.xml"}) 
+多个spring配置文件用“，”分隔
+
+9.在oracle中，只有不插入该字段，值才为null，若插入值为null，则报无效的列类型: 1111;
+	integer包装类的初始值是null，不是0，不要混淆。
+	类型为Integer的属性应在声明时初始化值。
+	
+10.mybatis的mapper配置文件中的update\delete\insert语句对应的java类方法默认返回修改数
+
+11.在mybatisConfig.xml中配置多个包的别名，采用声明多个package的方法，如
+<typeAliases>
+	<package name="entity" />
+	<package name="VO" />
+</typeAliases>3
+
+12.maven compile(test) 到projectName\target\classes
+
+13.代码不编译到projectName\src\main\webapp\WEB-INF\classes的解决办法：Project-clean-把项目加载进服务器
+
+14.org.mybatis.spring.SqlSessionFactoryBean中的mapperLocations用来配置mapper.xml
+   org.mybatis.spring.mapper.MapperScannerConfigurer中的basePackage用来配置mapper.java
+   
+15.mapper.java继承的BaseDao不需要写实现类
+
+16.难点：实现BaseDaoImpl中BaseDao的动态接收子类对象（构造函数的调用先于mapper的注入）
+       解决：手动定义spring对象并初始化，获取对应的mapper对象，通过父类的set方法设置baseDao
+       
+17.mybatis中使用foreach标签时，collection属性的值并不是传入集合的参数名称，而是集合类型
+	17.1 如果传入的是单参数且参数类型是一个List的时候，collection属性值为list
+	17.2 如果传入的是单参数且参数类型是一个array数组的时候，collection的属性值为array
+	17.3 如果传入的参数是多个的时候，我们就需要把它们封装成一个Map了，当然单参数也可以封装成map
+	
+18.BUG:The request sent by the client was syntactically incorrect ().
+	solution:
+	1、把日志设为debug级别，查看哪个参数绑定错误
+	2、若action method中的参数用对象接收，则form中字段的name对应user中的字段名（user中的username，在input中也是username）
+	3、file的name与multipartFile参数名一样
+	
+19.Spring MVC中日期类型参数与java对象的转换--在Date类型的属性上加入@DateTimeFormat(pattern="yyyy-MM-dd") 注解
+
+20.使用ajaxSubmit必须引入jquery.form.js
+
+21.Springmvc restful配置web.xml,url-pattern 配置/即可，如果配置/*的话会出问提，连返回视图jsp也会拦截
+
+22.js解析json{'message':'success'}
+	alert("data['message']:"+data['message']);
+	alert("data.message:"+data.message);
+	
+23.springmvc默认是单例的,普通属性和静态属性都会被共用。
+
+24.标签的onclick属性绑定的method中this指向问题
+	onclick='method()'-->function method()-->方法体中this为window对象
+	onclick='method(this)'-->function method(element)-->方法体中element为元素对象
+	onclick='method.call(this)'-->function method()-->方法体中this为元素对象
+
+25.登录设置cookie时遇到：Control character in cookie value, consider BASE64 encoding your value
+	原因：设置的cookie中有中文
+	解决：需要用utf-8编码后再存入cookie，取的时候用utf-8解码再处理
+	
+26.后台返回的json被打碎成单一字符
+	原因：没有设置contentType，默认为text/plain;charset=ISO-8859-1
+	解决：设置contentType，在RequestMapping中加入produces="application/json;charset=UTF-8"即可
+	
+27.查看后台设置的cookie-->审查元素-->network-->response headers
+
+28.设置cookie时，要加上setPath("/")，否则只对一个页面可见，域中其他页面访问不到该cookie
+       删除cookie时，除了setMaxAge(0)，还要setDomain()与setPath()才能定位到指定cookie，设置完记得addCookie()，否则无法删除
+
+29.append为内部插入，before、after为外部插入
+
+30.用amazeUI的icon时需导入fonts包
+
+31.使用jquery的clone()时，若要把事件（如click）也一并复制，需要加上true参数(clone(true))
+
+32.a标签中用href调用js方法，this为window对象
+
+33.获取jquery对象的字符串表现形式（不被解析）-->jQuery[0].outerHTML
+
+34.text()获取不到textarea的值
+	解决：val()
+	
+35.springmvc拦截器，要实现不拦截某些请求，要springmvc3.2以上版本，把schema改成http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+	然后要先mapping再exclude 
+	<mvc:mapping path="/**"/>
+	<mvc:exclude-mapping path="/user/login"/>
+	
+36.springmvc中不支持同名（input中的name）多文件上传
+	因为fileMap.entrySet()取出键值对时，Set要满足互异性，而input中的name是作为key的，故同名的文件只能保留第一个！
+	解决：将name随机命名，如Math.random()或new Date().getTime()
+
+37.js获取URL的几种类型
+*****设置或获取对象指定的文件名或路径。
+alert(window.location.pathname)
+*****设置或获取整个 URL 为字符串。
+alert(window.location.href);
+设置或获取与 URL 关联的端口号码。
+alert(window.location.port)
+设置或获取 URL 的协议部分。
+alert(window.location.protocol)
+设置或获取 href 属性中在井号“#”后面的分段。
+alert(window.location.hash)
+设置或获取 location 或 URL 的 hostname 和 port 号码。
+alert(window.location.host)
+*****设置或获取 href 属性中跟在问号后面的部分。
+alert(window.location.search)
+
+38.Not allowed to load local resource: file:///E:/
+	原因：页面img标签无法访问本地静态资源
+	解决：
+	（1）配置虚拟目录，在tomcat的server.xml目录下的host标签内加<Context docBase="目标目录" path="访问时的前缀，如/img就是localhost:port/img代表之前的目标目录" reloadable="true"></Context>
+	（2）将静态资源放到tomcat目录下
+	
+39.手写sql语句对db表进行增删改操作后，需要commit才生效
+
+40.使用正则实现js的replaceAll()方法，/string/g为全局string，案例：/E:\/SSMOnlineShop/g为替换所有的E:/SSMOnlineShop
+
+41.$('').innerHTML无法输出HTML元素且不报错
+	原因：jquery封装了html()用来输出html元素，直接调用innerHTML属性无法实现
+	解决：
+	(1)document.getElementById('item_desc').innerHTML = '';
+	(2)$('#item_desc').html('');
+	
+42.ajaxStart与ajaxStop不执行
+	解决：用$(document)对象调用
+	$(document).ajaxStart(function(){
+		$('.am-icon-pulse').show();
+	}).ajaxStop(function(){
+		$('.am-icon-pulse').hide();
+	})
+	
+43.js转换13位时间戳到yyyy-MM-dd
+//转换时间戳
+function getDate(value){
+	 return new Date(parseInt(("/Date("+value+")/").substr(6, 13))).toLocaleDateString();  
+}
+
+44.$.ajax与$.post中url写法的不同？
+
+45.两个Integer类型之间的比较，用==是判断Integer的地址，值相等时地址并不相等
+	解决:用intValue()取值比较
+	如：cartItem.getItem_id().intValue() == itemId.intValue();
+	
+46.<mvc:mapping path="/user/*"/>只能匹配/user/下0~1个目录，匹配不到/user/putIntoCart/{cartId}
+       解决：<mvc:mapping path="/user/**"/>能匹配/user/下0~n个目录
+       
+47.history.go(-1)不刷新
+	解决办法：window.location.href=document.referrer;
+	
+48.js向后端传json格式的数据，显示unsupported media type
+	原因：格式不正确
+	解决：（1）ajax参数加上contentType:'application/json';
+		 （2）POST提交
+		 
+49.SELECT时出现ORA-00936: 缺失表达式
+	SQL: SELECT order.*  
+	FROM os_order order, os_orderItem orderItem, os_item item  
+	WHERE orderItem.order_id = order.id   
+	AND orderItem.item_id = item.id   
+	AND item.user_id = ?
+	原因：语句中误写了关键字“order”导致语句不完整
+	
+50.
+	var itemId = itemList[j].item_id;
+	orderItem_template.children('.my_order_img').children('img').on('click', function(){
+		location.href = 'jsp/guest/itemDetail.jsp?id='+itemId;
+	});
+	问题：href的id并没有改变
+	原因：回调函数中，itemId对其不可见！
+	解决：将值作为属性保存，在回调函数中取属性值。
+
+51.js以GET方式提交中文参数到后台出现乱码?????
+	原因：get方式提交的参数编码，只支持iso-8859-1编码，而且出现“?”也表明编码为iso-8859-1。
+	解决：以iso-8859-1解码为原始字节，再以utf-8编码即可
+	案例：keyword = new String(keyword.getBytes("ISO-8859-1"),"UTF-8")
+	
+52.输出js对象标签的文本表示方法：outerHTML属性
+	输出DOM对象标签的文本表示：domObject.outerHTML
+	输出jquery对象标签的文本表示：img[0].outerHTML（img[0]将jquery对象转换成js对象）
+	

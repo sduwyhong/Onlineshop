@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace命名空间特殊作用： 如果使用mapper动态代理方法，这里就需要配置mapper接口地址-->
+
+<mapper namespace="dao.favorite.FavoriteItemMapper">
+	 
+	 <insert id="save">
+		 <selectKey keyProperty="id" order="BEFORE" resultType="Integer">
+		 	SELECT OS_FAVORITEITEM_SEQ.NEXTVAL 
+		 	FROM dual
+		 </selectKey>
+	 	INSERT INTO os_favoriteItem (id,item_id,fvt_id) 
+	 	VALUES(#{id},#{item_id},#{fvt_id})
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM  os_favoriteItem 
+		WHERE id=#{id}
+	</delete>
+
+	<select id="findById" resultType="FavoriteItem">
+		SELECT * 
+		FROM os_favoriteItem 
+		WHERE id=#{id}
+	</select>
+	
+	<select id="getAll" resultType="FavoriteItem">
+	 	SELECT * 
+	 	FROM os_favoriteItem
+	 </select>
+	
+	<select id="getByFavorite" resultType="FavoriteItem">
+		SELECT * 
+		FROM os_favoriteItem 
+		WHERE fvt_id = #{id}
+	</select>
+	
+</mapper>

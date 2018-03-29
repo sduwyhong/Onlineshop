@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.user.UserMapper">
+
+	<insert id="save">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT sys_guid()
+			FROM dual
+		</selectKey>
+		INSERT INTO os_user
+		(id,username,password,gender,birthday,address,telephone,regist_time,isSeller,img)
+		VALUES
+		(#{id},#{username},#{password},#{gender},#{birthday},#{address},#{telephone},#{regist_time},#{isSeller},#{img})
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM os_user
+		WHERE id=#{id}
+	</delete>
+	
+	<update id="changePwd">
+		UPDATE os_user
+		SET password=#{password}
+		WHERE id=#{id}
+	</update>
+	
+	<select id="findById" resultType="User">
+		SELECT *
+		FROM os_user
+		WHERE id=#{id}
+	</select>
+	
+	<select id="findByName" resultType="User">
+		SELECT * 
+		FROM os_user 
+		WHERE username = #{username}
+	</select>
+	
+	<select id="getAll" resultType="User">
+		SELECT *
+		FROM os_user
+	</select>
+	
+	<select id="getVO" resultType="UserBaseInfoVO">
+		SELECT * 
+		FROM os_user
+	</select>
+	
+	<select id="findVOById" resultType="UserBaseInfoVO">
+		SELECT *
+		FROM os_user
+		WHERE id = #{id}
+	</select>
+	
+	<select id="login" resultType="LoginVO">
+		SELECT username, password 
+		FROM os_user
+		WHERE username = #{username} 
+		AND password = #{password}
+	</select>
+	
+	<select id="getUsernameById" resultType="String">
+		SELECT username
+		FROM os_user
+		WHERE id = #{id}
+	</select>
+	
+	<select id="findByItem" resultType="User">
+		SELECT u.*
+		FROM os_user u, os_item i
+		WHERE i.user_id = u.id
+		AND i.id = #{itemId}
+	</select>
+</mapper>

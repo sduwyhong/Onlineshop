@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.review.ReviewMapper">
+
+	<insert id="save">
+		<selectKey keyProperty="id" order="BEFORE" resultType="Integer">
+			SELECT OS_REVIEW_SEQ.NEXTVAL
+			FROM dual
+		</selectKey>
+		INSERT INTO os_review
+		<if test="content != null">
+			(id,item_id,user_id,order_id,feedback,content)
+			VALUES
+			(#{id},#{item_id},#{user_id},#{order_id},#{feedback},#{content})
+		</if>
+		<if test="content == null">
+			(id,item_id,user_id,order_id,feedback)
+			VALUES
+			(#{id},#{item_id},#{user_id},#{order_id},#{feedback})
+		</if>
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM os_review
+		WHERE id = #{id}
+	</delete>
+	
+	<select id="findById" resultType="Review">
+		SELECT *
+		FROM os_review
+		WHERE id = #{id}
+	</select>
+	
+	<select id="getAll" resultType="Review">
+		SELECT *
+		FROM os_review
+	</select>
+	
+	<select id="getReviewsByItem" resultType="ReviewVO">
+		SELECT u.username, r.content, r.feedback
+		FROM os_review r, os_user u
+		WHERE r.item_id = #{id}
+		AND r.user_id = u.id 
+	</select>
+	
+	<select id="getReviewByOrder" resultType="Review">
+		SELECT *
+		FROM os_review
+		WHERE order_id = #{id}
+	</select>
+</mapper>

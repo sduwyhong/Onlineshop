@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- 配置子元素时要按照节点顺序 -->
+<configuration>
+	<!-- 定义别名，在mapper的xml配置中，参数、结果type属性中可直接用类名 -->
+	<typeAliases>
+		<!-- 多个包 -->
+		<package name="entity" />
+		<package name="VO" />
+	</typeAliases>
+	<!-- 由spring扫描mapper映射文件 -->
+</configuration>

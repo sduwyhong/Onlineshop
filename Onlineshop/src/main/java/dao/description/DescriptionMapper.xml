@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace命名空间特殊作用： 如果使用mapper动态代理方法，这里就需要配置mapper接口地址-->
+
+<mapper namespace="dao.description.DescriptionMapper">
+	 
+	 <insert id="save">
+		 <selectKey keyProperty="id" order="BEFORE" resultType="Integer">
+		 	SELECT OS_DESCRIPTION_SEQ.NEXTVAL 
+		 	FROM dual
+		 </selectKey>
+	 	INSERT INTO os_description 
+	 	<if test="content != null">
+	 		(id,item_id,content,img) 
+	 	VALUES(#{id},#{item_id},#{content},#{img})
+	 	</if>
+	 	<if test="content == null">
+	 		(id,item_id,img) 
+	 	VALUES(#{id},#{item_id},#{img})
+	 	</if>
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM  os_description 
+		WHERE id=#{id}
+	</delete>
+
+	<select id="findById" resultType="Description">
+		SELECT * 
+		FROM os_description 
+		WHERE id=#{id}
+	</select>
+	
+	<select id="getAll" resultType="Description">
+	 	SELECT * 
+	 	FROM os_description
+	 </select>
+	
+	<select id="getByItem" resultType="Description">
+		SELECT * 
+		FROM os_description 
+		WHERE item_id = #{id}
+	</select>
+	
+</mapper>

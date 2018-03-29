@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace命名空间特殊作用： 如果使用mapper动态代理方法，这里就需要配置mapper接口地址-->
+
+<mapper namespace="dao.order.OrderItemMapper">
+
+	 <insert id="save">
+		 <selectKey keyProperty="id" order="BEFORE" resultType="Integer">
+		 	SELECT OS_ORDERITEM_SEQ.NEXTVAL 
+		 	FROM dual
+		 </selectKey>
+	 	INSERT INTO os_orderItem (id,item_id,quantity,order_id,status)
+	 	VALUES(#{id},#{item_id},#{quantity},#{order_id},#{status})
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM  os_orderItem 
+		WHERE id = #{id}
+	</delete>
+	
+	<update id="setStatus">
+		UPDATE os_orderItem
+		SET status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="findById" resultType="OrderItem">
+		SELECT * 
+		FROM os_orderItem 
+		WHERE id = #{id}
+	</select>
+	
+	<select id="getAll" resultType="OrderItem">
+	 	SELECT * 
+	 	FROM os_orderItem
+	 </select>
+	 
+	<select id="getByOrder" resultType="OrderItem">
+	 	SELECT * 
+	 	FROM os_orderItem 
+	 	WHERE order_id = #{id}
+	 </select>
+	 
+	 <select id="getByOrderSeller" resultType="OrderItem">
+	 	SELECT oi.*
+	 	FROM os_orderItem oi, os_order o, os_item i
+	 	WHERE oi.order_id = o.id 
+	 	AND oi.item_id = i.id 
+	 	AND o.id = #{orderId} 
+	 	AND i.user_id = #{userId}
+	 </select>
+</mapper>

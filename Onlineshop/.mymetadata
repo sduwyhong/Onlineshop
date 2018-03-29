@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="Onlineshop"
+  id="myeclipse.1497248166589"
+  context-root="/Onlineshop"
+  j2ee-spec="6.0"
+  archive="Onlineshop.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+

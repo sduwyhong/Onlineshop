@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace命名空间特殊作用： 如果使用mapper动态代理方法，这里就需要配置mapper接口地址-->
+
+<mapper namespace="dao.category.CategoryMapper">
+	 
+	 <insert id="save">
+		 <selectKey keyProperty="id" order="BEFORE" resultType="Integer">
+		 	SELECT OS_CATEGORY_SEQ.NEXTVAL 
+		 	FROM dual
+		 </selectKey>
+	 	INSERT INTO os_category (id,name) 
+	 	VALUES(#{id},#{name})
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM  os_category 
+		WHERE id=#{id}
+	</delete>
+	
+	<update id="update">
+	 	UPDATE os_category 
+	 	SET name=#{name} 
+	 	WHERE id=#{id}
+	 </update>
+
+	<select id="findById" resultType="Category">
+		SELECT * 
+		FROM os_category 
+		WHERE id=#{id}
+	</select>
+	
+	<select id="getAll" resultType="Category">
+	 	SELECT * 
+	 	FROM os_category
+	 </select>
+	 
+</mapper>
